@@ -75,10 +75,10 @@ public class GUI extends javax.swing.JFrame {
         jLabel3.setText("Edges and weights :");
 
         jLabel4.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jLabel4.setText("Source vertix number :");
+        jLabel4.setText("Source vertex number :");
 
         jLabel5.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jLabel5.setText("Destination vertix number :");
+        jLabel5.setText("Destination vertex number :");
 
         jButton1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jButton1.setText("Submit");
