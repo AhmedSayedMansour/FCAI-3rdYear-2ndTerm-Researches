@@ -19,12 +19,6 @@ def printBoard(board):
     print("_____________")
     print(" "+ str(board[6])+ " | "+ str(board[7])+ " | "+ str(board[8])+ "\n")
 
-def isWin(board ,goal):
-    for i in board:
-        if i == goal:
-            return True
-    return False
-
 def minThreeBoards(board, PrePosition) :
     arr1, arr2, arr3 = list(board), list(board), list(board)
     arr1[PrePosition] = -1
@@ -33,17 +27,63 @@ def minThreeBoards(board, PrePosition) :
     boards = [ arr1, arr2, arr3]
     return boards
 
-def PrePosition(board, curPosition):
+def knowMove(pre,cur):
+    if pre-cur == 3 :
+        return "up"
+    elif pre-cur == -3 :
+        return "down"
+    elif pre-cur == -1 :
+        return "right"
+    elif pre-cur == 1 :
+        return "left"
+
+def newPositions(board, curPosition):
     boards = []
     #UP
-    if curPosition in up:   boards.append(curPosition)
+    if curPosition in up:   
+        boards.append(curPosition-3)
     #DOWN
-    if curPosition in down: boards.append(curPosition)
+    if curPosition in down: 
+        boards.append(curPosition+3)
     #RIGHT
-    if curPosition in right:boards.append(curPosition)
+    if curPosition in right:
+        boards.append(curPosition+1)
     #LEFT
-    if curPosition in left: boards.append(curPosition)
+    if curPosition in left: 
+        boards.append(curPosition-1)
     return boards
+
+def move(board, curPosition, move):
+    if move == 'up':
+        arr = list(board)
+        arr[curPosition-3] = arr[curPosition-3] + arr[curPosition]
+        return arr
+    elif move == 'down':
+        arr = list(board)
+        arr[curPosition+3] = arr[curPosition+3] + arr[curPosition] 
+        return arr
+    elif move == 'right':
+        arr = list(board)
+        arr[curPosition+1] = arr[curPosition+1] + arr[curPosition] 
+        return arr
+    elif move == 'left':
+        arr = list(board)
+        arr[curPosition-1] = arr[curPosition-1] + arr[curPosition] 
+        return arr
+
+def newPos(curPosition, move):
+    if move == 'up':
+        next = curPosition-3
+        return next
+    elif move == 'down':
+        next = curPosition+3
+        return next
+    elif move == 'right':
+        next = curPosition+1
+        return next
+    elif move == 'left':
+        next = curPosition-1
+        return next
 
 def possibleMoves(board, curPosition):
     boards = []
@@ -67,40 +107,87 @@ def possibleMoves(board, curPosition):
     return boards
 
 
-def alphabeta(board, curPosition, PrePosition, level, alpha, beta, maximizingPlayer, score) :
-    if isWin(board, goal):
-        return score
+def alphabeta(board, curPosition, PrePosition, level, alpha, beta, maximizingPlayer, numberMoves, move) :
+    returnList = []
+    #TESTING
+    #printBoard(board)
+    #print(str(curPosition)+" "+ str(PrePosition)+" "+ str(level)+" "+ str(alpha)+" "+ str(beta)+" "+ str(maximizingPlayer))
 
-    if(level > moves):
-        return score
-
+    if board[curPosition] >= goal or level >= numberMoves:
+        #print("Winning retuned with value of " + str(board[curPosition]) + " " + move)
+        returnList = [str(board[curPosition]) , move]
+        return returnList
+    
     if maximizingPlayer :
         value = -1*math.inf
-        boards = possibleMoves(board, curPosition)
-        for i in boards:
-            value = max(value, alphabeta(board, curPosition, PrePosition, level, alpha, beta, False, score))
+        new = list(newPositions(board, curPosition))
+        boards = list(possibleMoves(board, curPosition))
+        #print("MAX")
+        bestMove = " "
+        #print(boards)
+        for i in range(len(boards)):
+            if level == 0:
+                temp = value
+                newVal = alphabeta(boards[i], new[i], curPosition, level+1, alpha, beta, False, numberMoves, knowMove(curPosition, new[i]))
+                value = max(value, int(newVal[0]))
+                if temp != value :
+                    bestMove = knowMove(curPosition, new[i])
+            else :
+                newVal = alphabeta(boards[i], new[i], curPosition, level+1, alpha, beta, False, numberMoves, move)
+                value = max(value, int(newVal[0]))
             alpha = max(alpha, value)
             if alpha >= beta :
                 break
-        return value
+        if level == 0:
+            #print("\nbest move with value of " + str(value) + " " + bestMove) 
+            returnList = [str(value) , bestMove]
+            return returnList
+        #return value
+        else :
+            returnList = [str(value) , move]
+            return returnList
     else :
         value = math.inf
-        boards = minThreeBoards(board, PrePosition)
+        boards = list(minThreeBoards(board, PrePosition))
+        #print("MIN")
+        #print(boards)
         for i in range(3):
-            value = min(value, alphabeta(boards[i], curPosition, PrePosition, level, alpha, beta, True, score))
+            newVal = alphabeta(boards[i], curPosition, PrePosition, level, alpha, beta, True, numberMoves, move)
+            value = min(value, int(newVal[0]))
             beta = min(beta, value)
             if alpha >= beta :
                 break
-        return value
+        #return value
+        returnList = [str(value) , move]
+        return returnList
+
+def game(board, numberMoves):
+    print("\nYour board :\n")
+    printBoard(board)
+    pre = -1
+    position = 6
+    temp = numberMoves
+    for i in range(temp):
+        if board[position] >= goal :
+            print("WINNING in " + str(i+1) + " moves with score of " + str(board[position]))
+            break
+        arr =  alphabeta(board, position, pre, 0, -1*math.inf, math.inf, True, numberMoves, " ")
+        print("best move for this state to take " + arr[1] + "\n")
+        newBoard = move(board, position,arr[1])
+        board = newBoard
+        pre = position
+        position = newPos(position,arr[1])
+        newBoard[pre] = random.randrange(-1, 2)
+        printBoard(newBoard)
+        numberMoves = numberMoves-1
+        if i == temp-1 : 
+            if board[position] >= goal :
+                print("WINNING in " + str(i+1) + " moves with score of " + str(board[position]))
+            else :
+                print("LOSING with score of " + str(board[position]))
+            break
 
 if __name__ == "__main__": 
-    goal = input("Goal = ")
-    moves = input("Maximum number of moves = ")
-    print(intialize())
-    print(goal)
-    print(moves)
-    print(minThreeBoards(intialize(), 6))
-    print(intialize())
-    printBoard(intialize())
-    original = intialize()
-    #alphabeta(original, 6, -1, 1, -1*math.inf, math.inf, True, original[6])
+    goal = int(input("Goal = "))
+    moves = int(input("Maximum number of moves = "))
+    print(game([1,-1,0,1,0,1,0,1,-1],moves))
