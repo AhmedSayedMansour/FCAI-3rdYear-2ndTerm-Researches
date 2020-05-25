@@ -13,11 +13,11 @@ def intialize():
     return board
 
 def printBoard(board):
-    print("\n "+ str(board[0])+ " | "+ str(board[1])+ " | "+ str(board[2]))
+    print(" "+ str(board[0])+ " | "+ str(board[1])+ " | "+ str(board[2]))
     print("_____________")
     print(" "+ str(board[3])+ " | "+ str(board[4])+ " | "+ str(board[5]))
     print("_____________")
-    print(" "+ str(board[6])+ " | "+ str(board[7])+ " | "+ str(board[8])+ "\n")
+    print(" "+ str(board[6])+ " | "+ str(board[7])+ " | "+ str(board[8]))
 
 def minThreeBoards(board, PrePosition) :
     arr1, arr2, arr3 = list(board), list(board), list(board)
@@ -162,17 +162,18 @@ def alphabeta(board, curPosition, PrePosition, level, alpha, beta, maximizingPla
         return returnList
 
 def game(board, numberMoves):
-    print("\nYour board :\n")
+    print("\nYour board :")
     printBoard(board)
     pre = -1
     position = 6
     temp = numberMoves
     for i in range(temp):
         if board[position] >= goal :
-            print("WINNING in " + str(i+1) + " moves with score of " + str(board[position]))
+            print("\nWINNING in " + str(i+1) + " moves with score of " + str(board[position]))
+            print("Input :-\n   Number of moves : " + str(moves) + "\n   Goal : " + str(goal) + "\n")
             break
         arr =  alphabeta(board, position, pre, 0, -1*math.inf, math.inf, True, numberMoves, " ")
-        print("best move for this state to take " + arr[1] + "\n")
+        print("\nbest move for this state to take " + arr[1] + " in move number " + str(i+1))
         newBoard = move(board, position,arr[1])
         board = newBoard
         pre = position
@@ -182,12 +183,19 @@ def game(board, numberMoves):
         numberMoves = numberMoves-1
         if i == temp-1 : 
             if board[position] >= goal :
-                print("WINNING in " + str(i+1) + " moves with score of " + str(board[position]))
+                print("\nWINNING in " + str(i+1) + " moves with score of " + str(board[position]) + "\n")
+                print("Input :-\n   Number of moves : " + str(moves) + "\n   Goal : " + str(goal) + "\n")
             else :
-                print("LOSING with score of " + str(board[position]))
+                print("\nLOSING with score of " + str(board[position]) + "\n")
+                print("Input :-\n   Number of moves : " + str(moves) + "\n   Goal : " + str(goal) + "\n")
             break
 
 if __name__ == "__main__": 
     goal = int(input("Goal = "))
     moves = int(input("Maximum number of moves = "))
-    print(game([1,-1,0,1,0,1,0,1,-1],moves))
+    game([1,-1,0,1,0,1,0,1,-1],moves)
+    '''
+    if you want to make the all the board values initialized with random values call 'intialize()' function:
+    EX:
+    game(intialize(),moves)
+    '''
