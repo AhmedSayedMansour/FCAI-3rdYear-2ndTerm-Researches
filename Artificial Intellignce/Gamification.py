@@ -194,6 +194,7 @@ if __name__ == "__main__":
     goal = int(input("Goal = "))
     moves = int(input("Maximum number of moves = "))
     game([1,-1,0,1,0,1,0,1,-1],moves)
+    #game([-1,1,1,-1,-1,1,1,1,1],moves)
     '''
     if you want to make the all the board values initialized with random values call 'intialize()' function:
     EX:
