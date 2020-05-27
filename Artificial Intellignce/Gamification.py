@@ -113,7 +113,7 @@ def alphabeta(board, curPosition, PrePosition, level, alpha, beta, maximizingPla
     #printBoard(board)
     #print(str(curPosition)+" "+ str(PrePosition)+" "+ str(level)+" "+ str(alpha)+" "+ str(beta)+" "+ str(maximizingPlayer))
 
-    if board[curPosition] >= goal or level >= numberMoves:
+    if  level >= numberMoves:
         #print("Winning retuned with value of " + str(board[curPosition]) + " " + move)
         returnList = [str(board[curPosition]) , move]
         return returnList
