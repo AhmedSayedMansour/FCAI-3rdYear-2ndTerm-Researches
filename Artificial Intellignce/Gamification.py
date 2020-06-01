@@ -113,9 +113,14 @@ def alphabeta(board, curPosition, PrePosition, level, alpha, beta, maximizingPla
     #printBoard(board)
     #print(str(curPosition)+" "+ str(PrePosition)+" "+ str(level)+" "+ str(alpha)+" "+ str(beta)+" "+ str(maximizingPlayer))
 
-    if  level >= numberMoves:
+    if  level >= numberMoves :
         #print("Winning retuned with value of " + str(board[curPosition]) + " " + move)
         returnList = [str(board[curPosition]) , move]
+        #print(returnList)
+        return returnList
+    if board[curPosition] >= goal :
+        returnList = [str(board[curPosition]+10) , move]
+        #print(returnList)
         return returnList
     
     if maximizingPlayer :
@@ -123,29 +128,29 @@ def alphabeta(board, curPosition, PrePosition, level, alpha, beta, maximizingPla
         new = list(newPositions(board, curPosition))
         boards = list(possibleMoves(board, curPosition))
         #print("MAX")
-        bestMove = " "
+        bestMove = []
         #print(boards)
         for i in range(len(boards)):
-            if level == 0:
-                temp = value
-                newVal = alphabeta(boards[i], new[i], curPosition, level+1, alpha, beta, False, numberMoves, knowMove(curPosition, new[i]))
-                value = max(value, int(newVal[0]))
-                if temp != value :
-                    bestMove = knowMove(curPosition, new[i])
-            else :
-                newVal = alphabeta(boards[i], new[i], curPosition, level+1, alpha, beta, False, numberMoves, move)
-                value = max(value, int(newVal[0]))
+            temp = value
+            move.append(knowMove(curPosition, new[i]))
+            #print(move)
+            newVal = alphabeta(boards[i], new[i], curPosition, level+1, alpha, beta, False, numberMoves, move)
+            tempMove = list(move)
+            move.pop()
+            #print(tempMove)
+            #print(level)
+            #print(newVal)
+            value = max(value, int(newVal[0]))
+            if temp != value :
+                bestMove = list(tempMove)
+            
             alpha = max(alpha, value)
             if alpha >= beta :
                 break
-        if level == 0:
-            #print("\nbest move with value of " + str(value) + " " + bestMove) 
-            returnList = [str(value) , bestMove]
-            return returnList
+        
         #return value
-        else :
-            returnList = [str(value) , move]
-            return returnList
+        returnList = [str(value) , bestMove]
+        return returnList
     else :
         value = math.inf
         boards = list(minThreeBoards(board, PrePosition))
@@ -172,12 +177,13 @@ def game(board, numberMoves):
             print("\nWINNING in " + str(i+1) + " moves with score of " + str(board[position]))
             print("Input :-\n   Number of moves : " + str(moves) + "\n   Goal : " + str(goal) + "\n")
             break
-        arr =  alphabeta(board, position, pre, 0, -1*math.inf, math.inf, True, numberMoves, " ")
-        print("\nbest move for this state to take " + arr[1] + " in move number " + str(i+1))
-        newBoard = move(board, position,arr[1])
+        arr =  alphabeta(board, position, pre, 0, -1*math.inf, math.inf, True, numberMoves, [])
+        #print(arr)
+        print("\nbest move for this state to take " + arr[1][0] + " in move number " + str(i+1))
+        newBoard = move(board, position,arr[1][0])
         board = newBoard
         pre = position
-        position = newPos(position,arr[1])
+        position = newPos(position,arr[1][0])
         newBoard[pre] = random.randrange(-1, 2)
         printBoard(newBoard)
         numberMoves = numberMoves-1
