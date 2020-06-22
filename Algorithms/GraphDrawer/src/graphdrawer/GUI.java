@@ -6,8 +6,8 @@
 package graphdrawer;
 
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
-import static graphdrawer.ford_fulkerson.FordFulkerson;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JOptionPane;
 
@@ -16,8 +16,8 @@ import javax.swing.JOptionPane;
  * @author ahmed
  */
 public class GUI extends javax.swing.JFrame {
-    
-    int number ,src ,dest;
+
+    int number, src, dest;
     ArrayList<EdgeGUI> edges;
     GraphImage graphImage;
 
@@ -26,6 +26,52 @@ public class GUI extends javax.swing.JFrame {
      */
     public GUI() {
         initComponents();
+    }
+
+    void removeDuplicates(ArrayList<ArrayList<Integer>> array, ArrayList<Integer> array2) {
+        for (int i = 0; i < array.size() - 1; ++i) {
+            for (int j = i + 1; j < array.size(); ++j) {
+                if (array.get(i).equals(array.get(j))) {
+                    array.remove(j);
+                    array2.remove(j);
+                }
+            }
+        }
+    }
+
+    void plusOneAll(ArrayList<ArrayList<Integer>> array) {
+        for (int i = 0; i < array.size(); ++i) {
+            for (int j = 0; j < array.get(i).size(); ++j) {
+                array.get(i).set(j, array.get(i).get(j) + 1);
+            }
+        }
+    }
+    
+    int found(ArrayList<ArrayList<Integer>> results, ArrayList<Integer> curr){
+        for (int i=0; i < results.size(); ++i) {
+            if (results.get(i).equals(curr)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    ArrayList<Integer> res2=new ArrayList<>();
+    ArrayList<ArrayList<Integer>> collect(ArrayList<ArrayList<Integer>> array, ArrayList<Integer> array2) {
+        ArrayList<ArrayList<Integer>> results = new ArrayList<>();
+        for (int i = 0; i < array.size(); ++i) {
+            for (int j = 0; j < array.get(i).size()-1; ++j) {
+                ArrayList<Integer> curr = new ArrayList<>() ;
+                curr.add(array.get(i).get(j));  curr.add(array.get(i).get(j+1));
+                if (found(results, curr)>-1) {
+                    res2.set(found(results, curr), res2.get(found(results, curr))+array2.get(i) );
+                } else {
+                    results.add(curr);
+                    res2.add(array2.get(i));
+                }
+            }
+        }
+        return results;
     }
 
     /**
@@ -50,9 +96,13 @@ public class GUI extends javax.swing.JFrame {
         jTextArea1 = new javax.swing.JTextArea();
         jTextField3 = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
+        jSeparator4 = new javax.swing.JSeparator();
         jPanel3 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jSeparator3 = new javax.swing.JSeparator();
+        jLabel13 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -121,6 +171,9 @@ public class GUI extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
@@ -143,9 +196,7 @@ public class GUI extends javax.swing.JFrame {
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jSeparator4)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -175,23 +226,32 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(56, 56, 56)
+                .addGap(28, 28, 28)
+                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel7.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel7.setText("Your Graph :");
 
+        jLabel13.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel13.setText(" Maximum Flow chart :");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jScrollPane5)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jLabel7)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -199,8 +259,13 @@ public class GUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel7)
                 .addGap(28, 28, 28)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(329, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
         );
 
         jLabel6.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
@@ -317,9 +382,9 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
+                .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(15, 15, 15)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -335,7 +400,7 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 731, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 651, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -345,60 +410,109 @@ public class GUI extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        if( !jTextArea1.getText().isEmpty() && !jTextField1.getText().isEmpty() && !jTextField2.getText().isEmpty() && !jTextField3.getText().isEmpty()){
+        if (!jTextArea1.getText().isEmpty() && !jTextField1.getText().isEmpty() && !jTextField2.getText().isEmpty() && !jTextField3.getText().isEmpty()) {
             number = Integer.parseInt(jTextField1.getText());
             src = Integer.parseInt(jTextField2.getText());
             dest = Integer.parseInt(jTextField3.getText());
-            String []edges2 = jTextArea1.getText().split("\n");
-            
+            String[] edges2 = jTextArea1.getText().split("\n");
+
             edges = new ArrayList<>();
             ArrayList<Vertex> algover = new ArrayList<>();
-            
-            for(int i=0 ; i < number;++i){
-                algover.add( new Vertex( ""+(i+1) ) );
+
+            for (int i = 0; i < number; ++i) {
+                algover.add(new Vertex("" + (i + 1)));
             }
-            
-            Graph g = new Graph(number+1);
-            
-            for(int i=0 ; i < edges2.length;++i){
-                String [] eachEdge = edges2[i].split(" ");
-                EdgeGUI edge = new EdgeGUI(eachEdge[0] ,eachEdge[1]  ,eachEdge[2]);
+
+            for (int i = 0; i < edges2.length; ++i) {
+                String[] eachEdge = edges2[i].split(" ");
+                EdgeGUI edge = new EdgeGUI(eachEdge[0], eachEdge[1], eachEdge[2]);
                 edges.add(edge);
-                g.addEdge(Integer.parseInt(eachEdge[0]), Integer.parseInt(eachEdge[1]), Integer.parseInt(eachEdge[2]));
-                algover.get(Integer.parseInt(eachEdge[0])-1).addNeighbour(new Edge(Integer.parseInt(eachEdge[0]), algover.get(Integer.parseInt(eachEdge[0])-1), algover.get(Integer.parseInt(eachEdge[1])-1)));
-                if(eachEdge[3].equals("U") || eachEdge[3].equals("u")){
-                    edge = new EdgeGUI(eachEdge[1] ,eachEdge[0]  ,eachEdge[2]);
+                algover.get(Integer.parseInt(eachEdge[0]) - 1).addNeighbour(new Edge(Integer.parseInt(eachEdge[0]), algover.get(Integer.parseInt(eachEdge[0]) - 1), algover.get(Integer.parseInt(eachEdge[1]) - 1)));
+                if (eachEdge[3].equals("U") || eachEdge[3].equals("u")) {
+                    edge = new EdgeGUI(eachEdge[1], eachEdge[0], eachEdge[2]);
                     edges.add(edge);
-                    g.addEdge(Integer.parseInt(eachEdge[1]), Integer.parseInt(eachEdge[0]), Integer.parseInt(eachEdge[2]));
-                    algover.get(Integer.parseInt(eachEdge[1])-1).addNeighbour(new Edge(Integer.parseInt(eachEdge[1]), algover.get(Integer.parseInt(eachEdge[1])-1), algover.get(Integer.parseInt(eachEdge[0])-1)));
+                    algover.get(Integer.parseInt(eachEdge[1]) - 1).addNeighbour(new Edge(Integer.parseInt(eachEdge[1]), algover.get(Integer.parseInt(eachEdge[1]) - 1), algover.get(Integer.parseInt(eachEdge[0]) - 1)));
                 }
             }
-            
-            graphImage = new GraphImage(number,edges);
+
+            graphImage = new GraphImage(number, edges);
             VisualizationImageServer vs = graphImage.getGraphImageServer();
             jScrollPane2.add(vs);
-            
+
             DijkstraShortestPath shortestPath = new DijkstraShortestPath();
-            shortestPath.computeShortestPaths(algover.get(src-1));
+            shortestPath.computeShortestPaths(algover.get(src - 1));
             ArrayList<EdgeGUI> DijEdges = new ArrayList<>();
-            List list = shortestPath.getShortestPathTo(algover.get(dest-1));
-            for(int i=0 ; i< shortestPath.getShortestPathTo(algover.get(dest-1)).size()-1 ; ++i){
-                EdgeGUI edge = new EdgeGUI( (String)list.get(i), (String)list.get(i+1) ," ");
+            List list = shortestPath.getShortestPathTo(algover.get(dest - 1));
+            for (int i = 0; i < shortestPath.getShortestPathTo(algover.get(dest - 1)).size() - 1; ++i) {
+                EdgeGUI edge = new EdgeGUI((String) list.get(i), (String) list.get(i + 1), " ");
                 DijEdges.add(edge);
             }
             steps.setText("");
-            for(int i=0 ; i< shortestPath.getShortestPathTo(algover.get(dest-1)).size()-1 ; ++i){
-                steps.setText( steps.getText() + (String)list.get(i)+ " to " + (String)list.get(i+1) + "\n");
+            for (int i = 0; i < shortestPath.getShortestPathTo(algover.get(dest - 1)).size() - 1; ++i) {
+                steps.setText(steps.getText() + (String) list.get(i) + " to " + (String) list.get(i + 1) + "\n");
             }
-            GraphImage graphImage2 = new GraphImage(shortestPath.getShortestPathTo(algover.get(dest-1)).size(),DijEdges);
+            GraphImage graphImage2 = new GraphImage(shortestPath.getShortestPathTo(algover.get(dest - 1)).size(), DijEdges);
             VisualizationImageServer vs2 = graphImage2.getGraphImageServer();
             jScrollPane3.add(vs2);
-            jTextField4.setText(Double.toString(algover.get(dest-1).getDistance()));
+
+            //code for minimum Distance
+            int Vaa = number;
+            int sourceaa = src - 1;
+            List<List<Node>> adjaa = new ArrayList<>();
+            for (int i = 0; i < Vaa; i++) {
+                List<Node> item = new ArrayList<>();
+                adjaa.add(item);
+            }
+            for (int i = 0; i < edges2.length; ++i) {
+                String[] eachEdge = edges2[i].split(" ");
+                adjaa.get(Integer.parseInt(eachEdge[0]) - 1).add(new Node(Integer.parseInt(eachEdge[1]) - 1, Integer.parseInt(eachEdge[2])));
+                if (eachEdge[3].equals("U") || eachEdge[3].equals("u")) {
+                    adjaa.get(Integer.parseInt(eachEdge[1]) - 1).add(new Node(Integer.parseInt(eachEdge[0]) - 1, Integer.parseInt(eachEdge[2])));
+                }
+            }
+            shortDjik dpq = new shortDjik(Vaa);
+            dpq.dijkstra(adjaa, sourceaa);
+            jTextField4.setText(Double.toString(dpq.dist[dest - 1]));
+
+            //Ford Calling
+            //Ford Flow chart
+            int[][] arr = new int[number][number];
+            for (int[] arr1 : arr) {
+                Arrays.fill(arr1, 0);
+            }
+            for (int i = 0; i < edges2.length; ++i) {
+                String[] eachEdge = edges2[i].split(" ");
+                arr[Integer.parseInt(eachEdge[0]) - 1][Integer.parseInt(eachEdge[1]) - 1] = Integer.parseInt(eachEdge[2]);
+                if (eachEdge[3].equals("U") || eachEdge[3].equals("u")) {
+                    arr[Integer.parseInt(eachEdge[1]) - 1][Integer.parseInt(eachEdge[0]) - 1] = Integer.parseInt(eachEdge[2]);
+                }
+            }
+            MaxFlow m = new MaxFlow();
+            m.V = number;
+            m.fordFulkerson(arr, 0, number - 1);
+            jTextField5.setText(Integer.toString(m.fordFulkerson(arr, 0, number - 1)));
+
+            ArrayList<Integer> minNumbers = m.minNumbers;
+            ArrayList<ArrayList<Integer>> paths = m.paths;
+            removeDuplicates(paths, minNumbers);
+            plusOneAll(paths);
             
-            jTextField5.setText( (Float.toString(FordFulkerson(g, src, dest))) );
+            ArrayList<ArrayList<Integer>> paths2 = collect(paths, minNumbers) ;
+            System.out.println(res2);
             
-        }
-        else{
+            ArrayList<EdgeGUI> FordEdges = new ArrayList<>();
+            for (int i=0; i<res2.size();++i){
+                EdgeGUI edge = new EdgeGUI( Integer.toString(paths2.get(i).get(0)), Integer.toString(paths2.get(i).get(1) ), Integer.toString(res2.get(i) ));
+                FordEdges.add(edge);
+            }
+            
+            GraphImage graphImage3 = new GraphImage(number, FordEdges);
+            VisualizationImageServer vs3 = graphImage3.getGraphImageServer();
+            jScrollPane5.add(vs3);
+            
+            res2.clear();
+            paths.clear();
+        } else {
             JOptionPane.showMessageDialog(null, "fill all fields");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -452,6 +566,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -468,8 +583,11 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
