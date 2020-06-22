@@ -1,2 +1,0 @@
-graphdrawer.shortDjik
-graphdrawer.Node
